@@ -7,11 +7,11 @@
         <div class="container">
  	    <div class="title-container">Digital Board</div>
             <div class="budget-container">
-	        <a href="recordTransaction.php?budgetId=0" class="budget-button" style="background-color:orange;">
+	        <a href="recordTransaction.php?budgetId=1" class="budget-button" style="background-color:orange;">
 		    <p><b>Food Budget</b></p>
                     <p>$35.00</p>
                 </a>
-	        <a href="recordTransaction.php?budgetId=1" class="budget-button">
+	        <a href="recordTransaction.php?budgetId=2" class="budget-button">
                     <p><b>Misc. Budget </b></p>
                     <p>$127.00</p>
                 </a>

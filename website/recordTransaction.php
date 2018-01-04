@@ -5,11 +5,33 @@
     </head>
     <body>
         <?php
-            $budgetId = $_GET['budgetId'];
+            // Load DB Connction info
+            $dbConfig = parse_ini_file('dbConfig.ini');
+
+            // Create connection
+            $conn = new mysqli("localhost", $dbConfig['username'], $dbConfig['password'], $dbConfig['dbname']);
+        
+            // Check connection
+            if ($conn->connect_error)
+            {
+                die("Connection failed: " . $conn->connect_error);
+            }
+	    
+	    // Prepare query for budget name and balance
+	    $preparedQuery = $conn->prepare("SELECT Name FROM Budgets WHERE BudgetId = ?");
+	    $preparedQuery->bind_param("i", $_GET['budgetId']);
+
+	    // Execute query and fetch results
+	    $preparedQuery->execute();
+	    $preparedQuery->bind_result($budgetName);
+	    $preparedQuery->fetch();
+	    $preparedQuery->close();
+
+	    $conn->close();
         ?>
 	
         <div class="container">
-	    <div class="title-container">Budget Id <?php echo $budgetId ?></div>
+	    <div class="title-container"><?php echo $budgetName ?> Budget</div>
 	    <div class="transaction-form">
 		<p>Current Balance: $127.00</p>
                 <form id="transactionForm">
