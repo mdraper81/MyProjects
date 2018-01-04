@@ -1,0 +1,63 @@
+body {
+    background-color: PaleTurquoise;
+    color: white;
+    font-size: 60px;
+}
+
+input[type=number] {
+    font-size: 60px;
+    width: 500px;
+}
+
+.container {
+    flex: 1;
+}
+
+.budget-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+.budget-button {
+    background-color: green;
+    border-radius: 15px;
+    width: 400px;
+    margin: 30px;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+}
+
+.transaction-form {
+    color: black;
+}
+
+.title-container {
+    display: flex;
+    flex-direction: column;
+    background-color: DarkBlue;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 200px;
+    font-size: 100px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    flex-flow: column wrap;
+}
+
+.styled-button {
+    background-color: DarkBlue;
+    border-radius: 15px;
+    width: 90%;
+    margin: 50px;
+    text-align: center;
+    line-height: 150px;
+    color: white;
+    font-size: 60px;
+    text-decoration: none;
+    -webkit-appearance: none;
+}
