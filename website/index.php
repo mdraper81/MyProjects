@@ -7,14 +7,45 @@
         <div class="container">
  	    <div class="title-container">Digital Board</div>
             <div class="budget-container">
-	        <a href="recordTransaction.php?budgetId=1" class="budget-button" style="background-color:orange;">
-		    <p><b>Food Budget</b></p>
-                    <p>$35.00</p>
-                </a>
-	        <a href="recordTransaction.php?budgetId=2" class="budget-button">
-                    <p><b>Misc. Budget </b></p>
-                    <p>$127.00</p>
-                </a>
+            <?php
+                // Load DB Connction info
+                $dbConfig = parse_ini_file('dbConfig.ini');
+
+                // Create connection
+                $conn = new mysqli("localhost", $dbConfig['username'], $dbConfig['password'], $dbConfig['dbname']);
+            
+                // Check connection
+                if ($conn->connect_error)
+                {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+
+                // Prepare query for budget name and balance
+                $preparedQuery = $conn->prepare("SELECT bgt.BudgetId, bgt.Name, COALESCE(SUM(trns.Amount), 0) AS balance FROM Budgets bgt JOIN Transactions trns ON trns.BudgetId = bgt.BudgetId GROUP BY bgt.BudgetId");
+
+                // Execute query and fetch results
+                $preparedQuery->execute();
+                $preparedQuery->bind_result($budgetId, $budgetName, $balance);
+                while($preparedQuery->fetch())
+                {
+	            echo '<a href="recordTransaction.php?budgetId=' . $budgetId . '" class="budget-button"';
+		    if ($balance < 0)
+		    {
+                        echo ' style="background-color:red;"';
+		    }
+		    else if ($balance < 25)
+		    {
+                        echo ' style="background-color:orange;"';
+		    }
+		    echo '>';
+                    echo '    <p><b>' . $budgetName . ' Budget</b></p>';
+		    echo '    <p>$' . number_format($balance, 2) . '</p>';
+		    echo '</a>';
+                }
+                $preparedQuery->close();
+
+                $conn->close();
+            ?>
 	    </div>
 	    <div class="button-container">
 		<div class="styled-button">Settings</div>
