@@ -48,8 +48,8 @@
             ?>
 	    </div>
 	    <div class="button-container">
-		<div class="styled-button">Settings</div>
-                <div class="styled-button">Something else</div>
+		<a href="applyBonusFunds.php" class="styled-button">Apply Bonus Funds</a>
+                <div class="styled-button">Rebalance Funds</div>
             </div>
         </div>
     </body>

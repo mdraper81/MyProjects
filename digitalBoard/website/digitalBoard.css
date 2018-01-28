@@ -61,3 +61,10 @@ input[type=number] {
     text-decoration: none;
     -webkit-appearance: none;
 }
+
+.styled-dropdown {
+    font-size: 60px;
+    border-radius: 4px;
+    width: 75%;
+    -webkit-appearance: none;
+}
