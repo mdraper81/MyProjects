@@ -1,3 +1,5 @@
+USE digitalBoard;
+
 -- Create a table to store various periods that money can be distributed and populate it
 DROP TABLE IF EXISTS Periods;
 CREATE TABLE Periods (
@@ -12,9 +14,9 @@ INSERT INTO Periods (PeriodId, Description) VALUES (0, 'None'), (1, 'Weekly'), (
 
 -- Add more information to the Budgets table to define how much money should be distributed and with
 -- what frequency.  Populate this table with the appropriate info
-ALTER TABLE Budgets ADD COLUMN DistributionAmount INT NOT NULL DEFAULT 0 AFTER COLUMN Name;
-ALTER TABLE Budgets ADD COLUMN PeriodId INT NOT NULL DEFAULT 0 AFTER COLUMN DistributionAmount;
-ALTER TABLE ADD FOREIGN KEY (PeriodId) REFERENCES Periods (PeriodId);
+ALTER TABLE Budgets ADD COLUMN DistributionAmount INT NOT NULL DEFAULT 0 AFTER Name;
+ALTER TABLE Budgets ADD COLUMN PeriodId INT NOT NULL DEFAULT 0 AFTER DistributionAmount;
+ALTER TABLE Budgets ADD CONSTRAINT fk_Budgets_PeriodId FOREIGN KEY (PeriodId) REFERENCES Periods (PeriodId);
 
 UPDATE Budgets SET PeriodId = 2, DistributionAmount = 300 WHERE BudgetId = 1;
 UPDATE Budgets SET PeriodId = 2, DistributionAmount = 330 WHERE BudgetId = 2;
@@ -29,7 +31,7 @@ BEGIN
 	DECLARE _amount INT;
 	DECLARE _NextTimestamp TIMESTAMP;
     DECLARE distributionCursor CURSOR FOR SELECT BudgetId, DistributionAmount FROM Budgets WHERE PeriodId = _PeriodId;
-	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET _done = TRUE;
 	
 	SET @PAYCHECK_CATEGORY_ID = 2;
     
@@ -40,7 +42,7 @@ BEGIN
 	distributionLoop: LOOP
 	    FETCH distributionCursor INTO _budgetId, _amount;
 		
-		IF done THEN
+		IF _done THEN
 		    LEAVE distributionLoop;
 	    END IF;
 		
@@ -86,6 +88,6 @@ CREATE EVENT IF NOT EXISTS digitalBoard.event_semiannual_budget_distribution
 ON SCHEDULE EVERY 1 MONTH STARTS '2018-07-01 00:00:00' 
 DO CALL SP_BUDGET_DISTRIBUTION(5);
 
-CREATE EVENT IF NOT EXISTS digitalBoard.event_semiannual_budget_distribution
+CREATE EVENT IF NOT EXISTS digitalBoard.event_annual_budget_distribution
 ON SCHEDULE EVERY 1 MONTH STARTS '2019-01-01 00:00:00' 
 DO CALL SP_BUDGET_DISTRIBUTION(6);
