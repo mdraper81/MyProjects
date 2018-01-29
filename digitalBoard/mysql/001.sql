@@ -1,7 +1,4 @@
 -- Creates initial version of the database tables for the digital board project
-CREATE DATABASE IF NOT EXISTS digitalBoard;
-USE digitalBoard;
-
 SET foreign_key_checks = 0;
 
 DROP TABLE IF EXISTS Budgets;

@@ -1,6 +1,4 @@
 -- Submit the initial data to the database tables
-USE digitalBoard;
-
 INSERT INTO Budgets (BudgetId, Name) VALUES
 	(1, 'Food'),
 	(2, 'Misc.');

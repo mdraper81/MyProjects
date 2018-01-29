@@ -1,5 +1,3 @@
-USE digitalBoard;
-
 -- Create a table to store various periods that money can be distributed and populate it
 DROP TABLE IF EXISTS Periods;
 CREATE TABLE Periods (
