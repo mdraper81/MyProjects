@@ -6,6 +6,7 @@ import time
 class BlinkingLed:
     # Constants
     NO_PENDING_TOGGLE_MARK = -1
+    ENABLE_DEBUG_PRINTS = True
     
     # Constructor
     def __init__(self, pinNumber):
@@ -17,27 +18,36 @@ class BlinkingLed:
         self.led = gpiozero.LED(pinNumber)
     
     def ensureValidLastTimeMark(self):
-        print('Ensure valid time mark called. currentTime: ' + str(self.currentTimeInMs) + ' lastTimeMark: ' + str(self.lastTimeMark))
+        self.currentTimeInMs = int(time.time()*1000)
+        
         if (self.currentTimeInMs > self.lastTimeMark):
-            print('Reseting last time mark to time ' + str(self.lastTimeMark))
             self.lastTimeMark = self.currentTimeInMs
     
     def addBlinkingPattern(self, pattern):
         self.ensureValidLastTimeMark()
-
+        
         # Go through the array of durations and queue them up for the LED
         for duration in pattern:
             # Toggle LED
             self.updateQueue.put(self.lastTimeMark)
-            print('Adding toggle at time ' + str(self.lastTimeMark) + ' ms for duration ' + str(duration) + ' ms')
-
+            
             # Delay for the given duration
             self.lastTimeMark = self.lastTimeMark + duration
     
     def addDelay(self, duration):
         self.ensureValidLastTimeMark()
         self.lastTimeMark = self.lastTimeMark + duration
-
+    
+    def stopAndClearQueue(self):
+        if (self.isLedOn):
+            self.led.off()
+            self.isLedOn = False
+        
+        self.lastTimeMark = self.currentTimeInMs
+        self.upcomingToggleMark = self.NO_PENDING_TOGGLE_MARK
+        while (not self.updateQueue.empty()):
+            self.updateQueue.get()
+    
     def updateLED(self):
         if (self.isLedOn):
             self.led.on()
@@ -47,7 +57,7 @@ class BlinkingLed:
     def isIdle(self):
         if (self.upcomingToggleMark == self.NO_PENDING_TOGGLE_MARK and self.updateQueue.empty()):
             return True
-
+        
         return False
     
     # Called every frame to update the blinking LED
@@ -57,19 +67,20 @@ class BlinkingLed:
         # If we are not processing a character already check the queue to see if there is one to process
         if (self.upcomingToggleMark == self.NO_PENDING_TOGGLE_MARK and not self.updateQueue.empty()):
             self.upcomingToggleMark = self.updateQueue.get()
-
+        
         if (self.upcomingToggleMark != self.NO_PENDING_TOGGLE_MARK): # We are waiting on a tick
             if (self.currentTimeInMs > self.upcomingToggleMark): # And it is time for that tick
-                strDebug = 'Turning LED '
-                if (self.isLedOn):
-                    strDebug += 'off'
-                else:
-                    strDebug += ' on'
-                strDebug += ' at time ' + str(self.currentTimeInMs)
-                print(strDebug)
+                if (self.ENABLE_DEBUG_PRINTS):
+                    strDebug = 'Turning LED '
+                    if (self.isLedOn):
+                        strDebug += 'off'
+                    else:
+                        strDebug += ' on'
+                    strDebug += ' at time ' + str(self.currentTimeInMs)
+                    print(strDebug)
                 
                 # Toggle LED and reset the upcoming toggle mark indicator
                 self.isLedOn = not self.isLedOn
                 self.upcomingToggleMark = self.NO_PENDING_TOGGLE_MARK
-
+        
         self.updateLED()
