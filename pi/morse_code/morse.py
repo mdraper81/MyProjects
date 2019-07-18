@@ -1,6 +1,9 @@
-from blinkingLed import BlinkingLed;
+from morseLed import MorseLed;
 
-red_led = BlinkingLed()
-red_led.addString("SOS SOS")
+red_led = MorseLed(4)
 while (True):
     red_led.update()
+
+    if (red_led.isIdle()):
+        stringToEncode = input("Enter a sentence to encode: ")
+        red_led.addString(stringToEncode)
